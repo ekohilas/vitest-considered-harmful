@@ -3,16 +3,16 @@ import type {
   APIGatewayProxyHandlerV2,
   APIGatewayProxyResultV2,
 } from "aws-lambda";
-import { findPayment, getAllPayments } from "./paymentService";
+import { PaymentService } from "./paymentService";
 
 export async function getPayment(id: string) {
   // Some additional security logic.
-  return await findPayment(id);
+  return await PaymentService.findPayment(id);
 }
 
 export async function getPayments() {
   // Some additional security logic.
-  return await getAllPayments();
+  return await PaymentService.getAllPayments();
 }
 
 async function handleEvent(

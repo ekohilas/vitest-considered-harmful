@@ -1,7 +1,7 @@
 import { describe, it, vi } from "vitest";
 import { PaymentController } from "../src/paymentController";
 import { Payment } from "../src/paymentStore";
-import { findPayment, getAllPayments } from "../src/paymentService";
+import { PaymentService } from "../src/paymentService";
 
 vi.mock("../src/paymentService");
 
@@ -13,7 +13,7 @@ describe("PaymentController", () => {
       description: "money printer go brrr",
     };
 
-    vi.mocked(findPayment).mockResolvedValue(testPayment);
+    vi.mocked(PaymentService.findPayment).mockResolvedValue(testPayment);
 
     const payment = await PaymentController.getPayment(testPayment.id);
 
@@ -34,7 +34,7 @@ describe("PaymentController", () => {
       },
     ];
 
-    vi.mocked(getAllPayments).mockResolvedValue(expectedPayments);
+    vi.mocked(PaymentService.getAllPayments).mockResolvedValue(expectedPayments);
 
     const payment = await PaymentController.getPayments();
 

@@ -10,3 +10,5 @@ export async function getAllPayments(): Promise<Payment[]> {
   return payments;
 }
 
+export * as PaymentService from "./paymentService";
+
