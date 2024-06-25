@@ -4,6 +4,7 @@ export function ExampleStack({ stack }: StackContext) {
   // Create the HTTP API
   const api = new Api(stack, "Api", {
     routes: {
+      "GET /": "packages/functions/src/paymentController.handler",
     },
   });
 
