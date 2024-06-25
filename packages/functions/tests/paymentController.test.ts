@@ -3,8 +3,6 @@ import { PaymentController } from "../src/paymentController";
 import { Payment } from "../src/paymentStore";
 import { PaymentService } from "../src/paymentService";
 
-vi.mock("../src/paymentService");
-
 describe("PaymentController", () => {
   it("checks getting a payment via hoisting", async ({ expect }) => {
     const testPayment: Payment = {
@@ -13,7 +11,7 @@ describe("PaymentController", () => {
       description: "money printer go brrr",
     };
 
-    vi.mocked(PaymentService.findPayment).mockResolvedValue(testPayment);
+    vi.spyOn(PaymentService, "findPayment").mockResolvedValue(testPayment);
 
     const payment = await PaymentController.getPayment(testPayment.id);
 
@@ -34,7 +32,7 @@ describe("PaymentController", () => {
       },
     ];
 
-    vi.mocked(PaymentService.getAllPayments).mockResolvedValue(expectedPayments);
+    vi.spyOn(PaymentService, "getAllPayments").mockResolvedValue(expectedPayments);
 
     const payment = await PaymentController.getPayments();
 
