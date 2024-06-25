@@ -1,16 +1,9 @@
 import { describe, it, vi } from "vitest";
 import { PaymentController } from "../src/paymentController";
 import { Payment } from "../src/paymentStore";
+import { findPayment, getAllPayments } from "../src/paymentService";
 
-const mockedFindPayment = vi.hoisted(() => vi.fn());
-const mockedGetAllPayments = vi.hoisted(() => vi.fn());
-
-vi.mock("../src/paymentService", () => {
-  return {
-    findPayment: mockedFindPayment,
-    getAllPayments: mockedGetAllPayments,
-  }
-});
+vi.mock("../src/paymentService");
 
 describe("PaymentController", () => {
   it("checks getting a payment via hoisting", async ({ expect }) => {
@@ -20,7 +13,7 @@ describe("PaymentController", () => {
       description: "money printer go brrr",
     };
 
-    mockedFindPayment.mockResolvedValue(testPayment);
+    vi.mocked(findPayment).mockResolvedValue(testPayment);
 
     const payment = await PaymentController.getPayment(testPayment.id);
 
@@ -41,7 +34,7 @@ describe("PaymentController", () => {
       },
     ];
 
-    mockedGetAllPayments.mockResolvedValue(expectedPayments);
+    vi.mocked(getAllPayments).mockResolvedValue(expectedPayments);
 
     const payment = await PaymentController.getPayments();
 
