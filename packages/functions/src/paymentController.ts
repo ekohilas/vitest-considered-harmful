@@ -3,11 +3,16 @@ import type {
   APIGatewayProxyHandlerV2,
   APIGatewayProxyResultV2,
 } from "aws-lambda";
-import { findPayment } from "./paymentService";
+import { findPayment, getAllPayments } from "./paymentService";
 
 export async function getPayment(id: string) {
   // Some additional security logic.
   return await findPayment(id);
+}
+
+export async function getPayments() {
+  // Some additional security logic.
+  return await getAllPayments();
 }
 
 async function handleEvent(
@@ -35,9 +40,10 @@ async function handleEvent(
     };
   }
 
+  const payments = await getPayments();
   return Promise.resolve({
     statusCode: 200,
-    body: "Unsupported query.",
+    body: JSON.stringify(payments), 
   });
 }
 

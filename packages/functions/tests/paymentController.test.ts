@@ -24,4 +24,40 @@ describe("PaymentController", () => {
 
     expect(payment).toEqual(testPayment);
   });
+
+  it("checks getting all payments via mocking", async ({ expect }) => {
+    const expectedPayments: Payment[] = [
+      {
+        id: "000001",
+        amount: 100,
+        description: "money printer go brrr",
+      },
+      {
+        id: "000002",
+        amount: 420,
+        description: "lol",
+      },
+    ];
+
+    vi.mock("../src/paymentService", () => {
+      return {
+        getAllPayments: vi.fn().mockResolvedValue([
+          {
+            id: "000001",
+            amount: 100,
+            description: "money printer go brrr",
+          },
+          {
+            id: "000002",
+            amount: 420,
+            description: "lol",
+          },
+        ]),
+      };
+    });
+
+    const payment = await PaymentController.getPayments();
+
+    expect(payment).toEqual(expectedPayments);
+  });
 });
