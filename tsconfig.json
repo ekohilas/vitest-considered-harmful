@@ -1,0 +1,16 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "exclude": ["packages"],
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "allowUnreachableCode": false,
+    "strict": true,
+    "noEmit": true,
+    "experimentalDecorators": true,
+    "noErrorTruncation": true,
+    "noImplicitThis": false,
+    "resolveJsonModule": true,
+  }
+}
