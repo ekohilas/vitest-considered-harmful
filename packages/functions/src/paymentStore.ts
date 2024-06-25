@@ -22,3 +22,5 @@ export async function getPaymentsFromStore(): Promise<Payment[]> {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   return payments;
 }
+
+export * as PaymentStore from "./paymentStore";
