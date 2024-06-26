@@ -1,4 +1,4 @@
-import { describe, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { PaymentService } from "../src/paymentService";
 import { type Payment, PaymentStore } from "../src/paymentStore";
 
@@ -28,5 +28,11 @@ describe("PaymentService", () => {
     const actualNote = await PaymentService.findPayment(testPayment.id);
 
     expect(actualNote).toEqual(testPayment);
+  });
+
+  it("checks testPayment is not in real payments", async ({ expect }) => {
+    const actualPayments = await PaymentService.getAllPayments();
+
+    expect(actualPayments).not.toContain(testPayment);
   });
 });
