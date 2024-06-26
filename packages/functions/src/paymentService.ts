@@ -7,6 +7,7 @@ export async function findPayment(id: string): Promise<Payment | undefined> {
 
 export async function getAllPayments(): Promise<Payment[]> {
   const payments = await PaymentStore.getPaymentsFromStore();
+  await PaymentStore.checkForFraudulentPayments();
   return payments;
 }
 
