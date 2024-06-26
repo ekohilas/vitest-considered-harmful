@@ -3,7 +3,11 @@ import type {
   APIGatewayProxyHandlerV2,
   APIGatewayProxyResultV2,
 } from "aws-lambda";
+import { getFlagsFromStore } from "./flags/flagsStore";
+import FeatureFlags from "./flags/featureFlags";
 import { PaymentService } from "./paymentService";
+
+const featureFlags = new FeatureFlags(getFlagsFromStore);
 
 export async function getPayment(id: string) {
   // Some additional security logic.
@@ -11,7 +15,12 @@ export async function getPayment(id: string) {
 }
 
 export async function getPayments() {
-  // Some additional security logic.
+  const getNotesEnabled = await featureFlags.isFeatureFlagEnabled(
+    "disabledFlag"
+  );
+  if (!getNotesEnabled) {
+    throw new Error("Get notes feature is disabled.");
+  }
   return await PaymentService.getAllPayments();
 }
 
@@ -43,7 +52,7 @@ async function handleEvent(
   const payments = await getPayments();
   return Promise.resolve({
     statusCode: 200,
-    body: JSON.stringify(payments), 
+    body: JSON.stringify(payments),
   });
 }
 
