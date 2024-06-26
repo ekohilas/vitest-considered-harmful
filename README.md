@@ -1,6 +1,13 @@
 # Vitest Considered Harmful
 A [repo](https://github.com/ekohilas/vitest-considered-harmful) for resources of the talk.
 
+> [!IMPORTANT]
+> I'm currently working at Constantinople and we're [hiring!](https://jobs.lever.co/cxnpl)
+> 
+> We're an all-in-one software and operational platform for banks!
+> 
+> If you can solve the issues seen in this talk, or you're interested in working with us, get in touch at [evan@cxnpl.com](mailto:evan@cxnpl.com).
+
 ## Evan Kohilas
 ### [`nohumanerrors.com`](https://nohumanerrors.com)
 
