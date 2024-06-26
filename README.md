@@ -1,5 +1,17 @@
-# How to use DynamoDB in your serverless app
+# Vitest Considered Harmful
+A [repo](https://github.com/ekohilas/vitest-considered-harmful) for resources of the talk.
 
+## Evan Kohilas
+### [`nohumanerrors.com`](https://nohumanerrors.com)
+
+| Conference | Slides | Video | Notes | Length | Year |
+|------------|:------:|:-----:|:-----:|-------:|-----:|
+| [SydJS]() | [🔗]() | [🔗]() | [🔗]() | 45 min | 2024 |
+
+#### Abstract
+TODO
+
+## App
 An example serverless app created with SST.
 
 ## Getting Started
