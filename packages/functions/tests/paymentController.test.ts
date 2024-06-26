@@ -1,29 +1,45 @@
 import { describe, it, vi } from "vitest";
 import { PaymentController } from "../src/paymentController";
 import { Payment } from "../src/paymentStore";
-import { PaymentService } from "../src/paymentService";
 import FakeFlags from "./fakeFlags";
-import FeatureFlags from "../src/flags/featureFlags";
 
 describe("PaymentController", () => {
   it("checks getting a payment via hoisting", async ({ expect }) => {
+    const { PaymentService: mockedPaymentService } = await vi.importMock<
+      typeof import("../src/paymentService")
+    >("../src/paymentService");
+    const fakeFlags = new FakeFlags();
+
+    const paymentController = new PaymentController(
+      mockedPaymentService.prototype,
+      fakeFlags
+    );
+
     const testPayment: Payment = {
       id: "000000",
       amount: 100,
       description: "money printer go brrr",
     };
 
-    vi.spyOn(PaymentService, "findPayment").mockResolvedValue(testPayment);
+    mockedPaymentService.prototype.findPayment.mockResolvedValue(testPayment);
 
-    const payment = await PaymentController.getPayment(testPayment.id);
+    const payment = await paymentController.getPayment(testPayment.id);
 
     expect(payment).toEqual(testPayment);
   });
 
   it("checks getting all payments via hoisting", async ({ expect }) => {
+    const { PaymentService: mockedPaymentService } = await vi.importMock<
+      typeof import("../src/paymentService")
+    >("../src/paymentService");
+
     const fakeFlags = new FakeFlags();
     fakeFlags.setGlobalFlagValue("disabledFlag", true);
-    vi.spyOn(FeatureFlags, "getInstance").mockReturnValue(fakeFlags);
+
+    const paymentController = new PaymentController(
+      mockedPaymentService.prototype,
+      fakeFlags
+    );
 
     const expectedPayments: Payment[] = [
       {
@@ -38,9 +54,11 @@ describe("PaymentController", () => {
       },
     ];
 
-    vi.spyOn(PaymentService, "getAllPayments").mockResolvedValue(expectedPayments);
+    mockedPaymentService.prototype.getAllPayments.mockResolvedValue(
+      expectedPayments
+    );
 
-    const payment = await PaymentController.getPayments();
+    const payment = await paymentController.getPayments();
 
     expect(payment).toEqual(expectedPayments);
   });

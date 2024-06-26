@@ -5,57 +5,76 @@ import type {
 } from "aws-lambda";
 import FeatureFlags from "./flags/featureFlags";
 import { PaymentService } from "./paymentService";
+import { PaymentStore } from "./paymentStore";
+import { getFlagsFromStore } from "./flags/flagsStore";
+import Flags from "./flags/flags";
 
-export async function getPayment(id: string) {
-  // Some additional security logic.
-  return await PaymentService.findPayment(id);
-}
+export class PaymentController {
+  constructor(
+    private paymentService: PaymentService,
+    private featureFlags: Flags 
+  ) {}
 
-export async function getPayments() {
-  const featureFlags = FeatureFlags.getInstance();
-  const getNotesEnabled = await featureFlags.isFeatureFlagEnabled(
-    "disabledFlag"
-  );
-  if (!getNotesEnabled) {
-    throw new Error("Get notes feature is disabled.");
+  async getPayment(id: string) {
+    // Some additional security logic.
+    return await this.paymentService.findPayment(id);
   }
-  return await PaymentService.getAllPayments();
-}
 
-async function handleEvent(
-  event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
-  if (event.queryStringParameters === undefined) {
+  async getPayments() {
+    const getPaymentsEnabled = await this.featureFlags.isFeatureFlagEnabled(
+      "disabledFlag"
+    );
+    if (!getPaymentsEnabled) {
+      throw new Error("Get payments feature is disabled.");
+    }
+    return await this.paymentService.getAllPayments();
+  }
+
+  async handleEvent(
+    event: APIGatewayProxyEventV2
+  ): Promise<APIGatewayProxyResultV2> {
+    if (event.queryStringParameters === undefined) {
+      return Promise.resolve({
+        statusCode: 200,
+        body: "No query parameters provided.",
+      });
+    }
+
+    const paymentId = event.queryStringParameters["paymentId"];
+    if (paymentId !== undefined) {
+      const payment = await this.getPayment(paymentId);
+      if (payment === undefined) {
+        return {
+          statusCode: 401,
+          body: "Payment not found.",
+        };
+      }
+      return {
+        statusCode: 200,
+        body: JSON.stringify(payment),
+      };
+    }
+
+    const payments = await this.getPayments();
     return Promise.resolve({
       statusCode: 200,
-      body: "No query parameters provided.",
+      body: JSON.stringify(payments),
     });
   }
 
-  const paymentId = event.queryStringParameters["paymentId"];
-  if (paymentId !== undefined) {
-    const payment = await getPayment(paymentId);
-    if (payment === undefined) {
-      return {
-        statusCode: 401,
-        body: "Payment not found.",
-      };
-    }
-    return {
-      statusCode: 200,
-      body: JSON.stringify(payment),
-    };
+  static buildController() {
+    const featureFlags = new FeatureFlags(getFlagsFromStore);
+    const paymentStore = new PaymentStore();
+    const paymentService = new PaymentService(paymentStore);
+    const paymentController = new PaymentController(
+      paymentService,
+      featureFlags
+    );
+    return paymentController;
   }
-
-  const payments = await getPayments();
-  return Promise.resolve({
-    statusCode: 200,
-    body: JSON.stringify(payments),
-  });
 }
 
 export const handler: APIGatewayProxyHandlerV2 = async (event) => {
-  return handleEvent(event);
+  const paymentController = PaymentController.buildController();
+  return paymentController.handleEvent(event);
 };
-
-export * as PaymentController from "./paymentController";

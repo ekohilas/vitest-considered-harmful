@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, it, vi } from "vitest";
+import { describe, it, vi } from "vitest";
 import { PaymentService } from "../src/paymentService";
-import { type Payment, PaymentStore } from "../src/paymentStore";
+import { type Payment } from "../src/paymentStore";
 
 const testPayment: Payment = {
   id: "000000",
@@ -10,31 +10,35 @@ const testPayment: Payment = {
 const testPayments = [testPayment];
 
 describe("PaymentService", () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
+  it("checks getting all payments", async ({ expect }) => {
+    const { PaymentStore: mockedPaymentStore } = await vi.importMock<
+      typeof import("../src/paymentStore")
+    >("../src/paymentStore");
 
-  afterEach(() => {
-    vi.resetAllMocks();
-  });
+    const paymentService = new PaymentService(mockedPaymentStore.prototype);
 
-  it("checks getting all notes", async ({ expect }) => {
-    vi.spyOn(PaymentStore, "getPaymentsFromStore").mockResolvedValue(
+    mockedPaymentStore.prototype.getPaymentsFromStore.mockResolvedValue(
       testPayments
     );
 
-    const actualPayments = await PaymentService.getAllPayments();
+    const actualPayments = await paymentService.getAllPayments();
 
     expect(actualPayments).toEqual(testPayments);
   });
 
-  it("checks getting a note via spying", async ({ expect }) => {
-    vi.spyOn(PaymentStore, "getPaymentsFromStore").mockResolvedValue(
+  it("checks getting a payment", async ({ expect }) => {
+    const { PaymentStore: mockedPaymentStore } = await vi.importMock<
+      typeof import("../src/paymentStore")
+    >("../src/paymentStore");
+
+    const paymentService = new PaymentService(mockedPaymentStore.prototype);
+
+    mockedPaymentStore.prototype.getPaymentsFromStore.mockResolvedValue(
       testPayments
     );
 
-    const actualNote = await PaymentService.findPayment(testPayment.id);
+    const actualPayment = await paymentService.findPayment(testPayment.id);
 
-    expect(actualNote).toEqual(testPayment);
+    expect(actualPayment).toEqual(testPayment);
   });
 });
