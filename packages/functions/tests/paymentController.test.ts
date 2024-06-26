@@ -2,16 +2,20 @@ import { describe, it, vi } from "vitest";
 import { PaymentController } from "../src/paymentController";
 import { Payment } from "../src/paymentStore";
 import FakeFlags from "./fakeFlags";
+import { PaymentService } from "../src/paymentService";
+import { mockDeep } from "vitest-mock-extended";
 
 describe("PaymentController", () => {
   it("checks getting a payment via hoisting", async ({ expect }) => {
-    const { PaymentService: mockedPaymentService } = await vi.importMock<
-      typeof import("../src/paymentService")
-    >("../src/paymentService");
+    const mockedPaymentService = mockDeep<PaymentService>({
+      fallbackMockImplementation: () => {
+        throw new Error("A called method was not mocked");
+      },
+    });
     const fakeFlags = new FakeFlags();
 
     const paymentController = new PaymentController(
-      mockedPaymentService.prototype,
+      mockedPaymentService,
       fakeFlags
     );
 
@@ -21,7 +25,7 @@ describe("PaymentController", () => {
       description: "money printer go brrr",
     };
 
-    mockedPaymentService.prototype.findPayment.mockResolvedValue(testPayment);
+    mockedPaymentService.findPayment.mockResolvedValue(testPayment);
 
     const payment = await paymentController.getPayment(testPayment.id);
 
@@ -29,15 +33,17 @@ describe("PaymentController", () => {
   });
 
   it("checks getting all payments via hoisting", async ({ expect }) => {
-    const { PaymentService: mockedPaymentService } = await vi.importMock<
-      typeof import("../src/paymentService")
-    >("../src/paymentService");
+    const mockedPaymentService = mockDeep<PaymentService>({
+      fallbackMockImplementation: () => {
+        throw new Error("A called method was not mocked");
+      },
+    });
 
     const fakeFlags = new FakeFlags();
     fakeFlags.setGlobalFlagValue("disabledFlag", true);
 
     const paymentController = new PaymentController(
-      mockedPaymentService.prototype,
+      mockedPaymentService,
       fakeFlags
     );
 
@@ -54,9 +60,7 @@ describe("PaymentController", () => {
       },
     ];
 
-    mockedPaymentService.prototype.getAllPayments.mockResolvedValue(
-      expectedPayments
-    );
+    mockedPaymentService.getAllPayments.mockResolvedValue(expectedPayments);
 
     const payment = await paymentController.getPayments();
 
