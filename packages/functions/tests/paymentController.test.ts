@@ -2,6 +2,8 @@ import { describe, it, vi } from "vitest";
 import { PaymentController } from "../src/paymentController";
 import { Payment } from "../src/paymentStore";
 import { PaymentService } from "../src/paymentService";
+import FakeFlags from "./fakeFlags";
+import FeatureFlags from "../src/flags/featureFlags";
 
 describe("PaymentController", () => {
   it("checks getting a payment via hoisting", async ({ expect }) => {
@@ -19,6 +21,10 @@ describe("PaymentController", () => {
   });
 
   it("checks getting all payments via hoisting", async ({ expect }) => {
+    const fakeFlags = new FakeFlags();
+    fakeFlags.setGlobalFlagValue("disabledFlag", true);
+    vi.spyOn(FeatureFlags, "getInstance").mockReturnValue(fakeFlags);
+
     const expectedPayments: Payment[] = [
       {
         id: "000001",

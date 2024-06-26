@@ -3,11 +3,8 @@ import type {
   APIGatewayProxyHandlerV2,
   APIGatewayProxyResultV2,
 } from "aws-lambda";
-import { getFlagsFromStore } from "./flags/flagsStore";
 import FeatureFlags from "./flags/featureFlags";
 import { PaymentService } from "./paymentService";
-
-const featureFlags = new FeatureFlags(getFlagsFromStore);
 
 export async function getPayment(id: string) {
   // Some additional security logic.
@@ -15,6 +12,7 @@ export async function getPayment(id: string) {
 }
 
 export async function getPayments() {
+  const featureFlags = FeatureFlags.getInstance();
   const getNotesEnabled = await featureFlags.isFeatureFlagEnabled(
     "disabledFlag"
   );

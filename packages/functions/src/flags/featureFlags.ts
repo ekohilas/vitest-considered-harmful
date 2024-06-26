@@ -9,6 +9,7 @@ import { getFlagsFromStore, type flagStore } from "./flagsStore";
 
     private cacheInvalidationEpochMilliSeconds: number;
     private refreshScheduleMilliseconds: number;
+    private static instance?: FeatureFlags;
   
     constructor(
       flagsRepo: typeof getFlagsFromStore,
@@ -35,6 +36,13 @@ import { getFlagsFromStore, type flagStore } from "./flagsStore";
         this.cacheInvalidationEpochMilliSeconds =
           Date.now() + this.refreshScheduleMilliseconds;
       }
+    }
+  
+    static getInstance() {
+      if (!FeatureFlags.instance) {
+        FeatureFlags.instance = new FeatureFlags(getFlagsFromStore);
+      }
+      return FeatureFlags.instance;
     }
   }
   
