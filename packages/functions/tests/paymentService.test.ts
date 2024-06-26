@@ -18,7 +18,7 @@ describe("PaymentService", () => {
     vi.resetAllMocks();
   });
 
-  it("checks getting all notes", async ({ expect }) => {
+  it("checks getting all payments via spying", async ({ expect }) => {
     vi.spyOn(PaymentStore, "getPaymentsFromStore").mockResolvedValue(
       testPayments
     );
@@ -28,13 +28,13 @@ describe("PaymentService", () => {
     expect(actualPayments).toEqual(testPayments);
   });
 
-  it("checks getting a note via spying", async ({ expect }) => {
+  it("checks getting a payment via spying", async ({ expect }) => {
     vi.spyOn(PaymentStore, "getPaymentsFromStore").mockResolvedValue(
       testPayments
     );
 
-    const actualNote = await PaymentService.findPayment(testPayment.id);
+    const actualPayment = await PaymentService.findPayment(testPayment.id);
 
-    expect(actualNote).toEqual(testPayment);
+    expect(actualPayment).toEqual(testPayment);
   });
 });
