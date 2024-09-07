@@ -2,17 +2,19 @@ import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import FeatureFlags from "../src/flags/featureFlags";
 
 // TODO: Make concurrent once issue related to importing/mocking getFlagRepo within FeatureFlags is resolved.
-describe("FeatureFlags", () => {
+describe.concurrent("FeatureFlags", () => {
   const fakeDate = Date.now();
+  console.log("fakeDate", fakeDate);
   const zeroRefreshScheduleMilliseconds = 0;
 
   beforeEach(() => {
-    vi.useFakeTimers();
+    // vi.useFakeTimers();
     vi.setSystemTime(fakeDate);
   });
 
   afterEach(() => {
-    vi.useRealTimers();
+    vi.resetAllMocks();
+    // vi.useRealTimers();
   });
 
   it("gets a disabled flag", async ({ expect }) => {

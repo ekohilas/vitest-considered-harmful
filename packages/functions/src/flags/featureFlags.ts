@@ -28,13 +28,16 @@ import { getFlagsFromStore, type flagStore } from "./flagsStore";
   
     /** This needs to be called before accessing the flags. */
     async #refreshConfig() {
+      const now = Date.now();
+      console.log("now", now);
+      console.log("cache", this.cacheInvalidationEpochMilliSeconds);
       if (
-        Date.now() > this.cacheInvalidationEpochMilliSeconds ||
+        now > this.cacheInvalidationEpochMilliSeconds ||
         this.flags === undefined
       ) {
         this.flags = await this.flagsStore();
         this.cacheInvalidationEpochMilliSeconds =
-          Date.now() + this.refreshScheduleMilliseconds;
+          now + this.refreshScheduleMilliseconds;
       }
     }
   
