@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import FeatureFlags from "../src/flags/featureFlags";
+import { mockDeep } from "vitest-mock-extended";
+import { FlagsStore, getFlagsFromStore } from "../src/flags/flagsStore";
 
 // TODO: Make concurrent once issue related to importing/mocking getFlagRepo within FeatureFlags is resolved.
-describe("FeatureFlags", () => {
+describe.concurrent("FeatureFlags", () => {
   const fakeDate = Date.now();
   const zeroRefreshScheduleMilliseconds = 0;
 
@@ -16,14 +18,12 @@ describe("FeatureFlags", () => {
   });
 
   it("gets a disabled flag", async ({ expect }) => {
-    const { getFlagsFromStore: mockedGetFlagsStore } = await vi.importMock<
-      typeof import("../src/flags/flagsStore")
-    >("../src/flags/flagsStore");
+    const mockedGetFlagsStore = mockDeep<FlagsStore>();
 
     const fakeFlags = {
       testFlagOff: false,
     };
-    mockedGetFlagsStore.mockResolvedValue(fakeFlags);
+    mockedGetFlagsStore.getFlagsFromStore.mockResolvedValue(fakeFlags);
 
     const featureFlags = new FeatureFlags(mockedGetFlagsStore);
     const exampleEnabled = await featureFlags.isFeatureFlagEnabled(
@@ -33,14 +33,12 @@ describe("FeatureFlags", () => {
   });
 
   it("gets an enabled flag", async ({ expect }) => {
-    const { getFlagsFromStore: mockedGetFlagsStore } = await vi.importMock<
-      typeof import("../src/flags/flagsStore")
-    >("../src/flags/flagsStore");
+    const mockedGetFlagsStore = mockDeep<FlagsStore>();
 
     const fakeFlags = {
       testFlagOn: true,
     };
-    mockedGetFlagsStore.mockResolvedValue(fakeFlags);
+    mockedGetFlagsStore.getFlagsFromStore.mockResolvedValue(fakeFlags);
 
     const featureFlags = new FeatureFlags(mockedGetFlagsStore);
     const flagValue = await featureFlags.isFeatureFlagEnabled("testFlagOn");
@@ -48,11 +46,8 @@ describe("FeatureFlags", () => {
   });
 
   it("returns false when given a valid unset flag", async ({ expect }) => {
-    const { getFlagsFromStore: mockedGetFlagsStore } = await vi.importMock<
-      typeof import("../src/flags/flagsStore")
-    >("../src/flags/flagsStore");
-
-    mockedGetFlagsStore.mockResolvedValue({});
+    const mockedGetFlagsStore = mockDeep<FlagsStore>();
+    mockedGetFlagsStore.getFlagsFromStore.mockResolvedValue({});
 
     const featureFlags = new FeatureFlags(mockedGetFlagsStore);
     const flagValue = await featureFlags.isFeatureFlagEnabled("unsetFlag");
@@ -61,11 +56,8 @@ describe("FeatureFlags", () => {
   });
 
   it("does not refresh when under the schedule", async ({ expect }) => {
-    const { getFlagsFromStore: mockedGetFlagsStore } = await vi.importMock<
-      typeof import("../src/flags/flagsStore")
-    >("../src/flags/flagsStore");
-
-    mockedGetFlagsStore.mockResolvedValue({});
+    const mockedGetFlagsStore = mockDeep<FlagsStore>();
+    mockedGetFlagsStore.getFlagsFromStore.mockResolvedValue({});
 
     const featureFlags = new FeatureFlags(
       mockedGetFlagsStore,
@@ -73,18 +65,16 @@ describe("FeatureFlags", () => {
     );
 
     await featureFlags.isFeatureFlagEnabled("testFlag");
-    expect(mockedGetFlagsStore).toHaveBeenCalledTimes(1);
+    expect(mockedGetFlagsStore.getFlagsFromStore
+    ).toHaveBeenCalledTimes(1);
 
     await featureFlags.isFeatureFlagEnabled("testFlag");
-    expect(mockedGetFlagsStore).toHaveBeenCalledTimes(1);
+    expect(mockedGetFlagsStore.getFlagsFromStore).toHaveBeenCalledTimes(1);
   });
 
   it("does refresh when over the schedule", async ({ expect }) => {
-    const { getFlagsFromStore: mockedGetFlagsStore } = await vi.importMock<
-      typeof import("../src/flags/flagsStore")
-    >("../src/flags/flagsStore");
-
-    mockedGetFlagsStore.mockResolvedValue({});
+    const mockedGetFlagsStore = mockDeep<FlagsStore>();
+    mockedGetFlagsStore.getFlagsFromStore.mockResolvedValue({});
 
     const featureFlags = new FeatureFlags(
       mockedGetFlagsStore,
@@ -92,10 +82,10 @@ describe("FeatureFlags", () => {
     );
 
     await featureFlags.isFeatureFlagEnabled("testFlag");
-    expect(mockedGetFlagsStore).toHaveBeenCalledTimes(1);
+    expect(mockedGetFlagsStore.getFlagsFromStore).toHaveBeenCalledTimes(1);
 
     vi.setSystemTime(fakeDate + 1);
     await featureFlags.isFeatureFlagEnabled("testFlag");
-    expect(mockedGetFlagsStore).toHaveBeenCalledTimes(2);
+    expect(mockedGetFlagsStore.getFlagsFromStore).toHaveBeenCalledTimes(2);
   });
 });

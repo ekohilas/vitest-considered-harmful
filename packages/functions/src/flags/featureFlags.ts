@@ -1,10 +1,10 @@
 import Flags from "./flags";
-import { getFlagsFromStore, type flagStore } from "./flagsStore";
+import { FlagsStore, type flagStore } from "./flagsStore";
 
   const REFRESH_SCHEDULE_MILLISECONDS = 5 * 60 * 1000;
   
   export default class FeatureFlags implements Flags {
-    private flagsStore: typeof getFlagsFromStore;
+    private flagsStore: FlagsStore 
     private flags!: flagStore;
 
     private cacheInvalidationEpochMilliSeconds: number;
@@ -12,7 +12,7 @@ import { getFlagsFromStore, type flagStore } from "./flagsStore";
     private static instance?: FeatureFlags;
   
     constructor(
-      flagsRepo: typeof getFlagsFromStore,
+      flagsRepo: FlagsStore,
       refreshScheduleMilliseconds = REFRESH_SCHEDULE_MILLISECONDS
     ) {
       this.flagsStore = flagsRepo;
@@ -32,7 +32,7 @@ import { getFlagsFromStore, type flagStore } from "./flagsStore";
         Date.now() > this.cacheInvalidationEpochMilliSeconds ||
         this.flags === undefined
       ) {
-        this.flags = await this.flagsStore();
+        this.flags = await this.flagsStore.getFlagsFromStore();
         this.cacheInvalidationEpochMilliSeconds =
           Date.now() + this.refreshScheduleMilliseconds;
       }
@@ -40,7 +40,12 @@ import { getFlagsFromStore, type flagStore } from "./flagsStore";
   
     static getInstance() {
       if (!FeatureFlags.instance) {
-        FeatureFlags.instance = new FeatureFlags(getFlagsFromStore);
+        const flagsStore = new FlagsStore(
+          {
+            testFlag: true,
+          }
+        );
+        FeatureFlags.instance = new FeatureFlags(flagsStore);
       }
       return FeatureFlags.instance;
     }

@@ -5,6 +5,10 @@ const store: flagStore = {
 
 export type flagStore = Record<string, boolean>;
 
-export async function getFlagsFromStore() {
-    return Promise.resolve(store);
+export class FlagsStore {
+    constructor(private readonly flagStore: flagStore) {}
+
+    async getFlagsFromStore() {
+        return Promise.resolve(this.flagStore);
+    }
 }
