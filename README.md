@@ -18,7 +18,13 @@ A [repo](https://github.com/ekohilas/vitest-considered-harmful) for resources of
 | [SydJS]() | [🔗]() | [🔗](https://youtu.be/SJG8dSn22rw?si=vMTW1U7vvL3ThfXb&t=123) | [🔗]() | 45 min | 2024 |
 
 ### Abstract
-TODO
+
+We might all agree that Javascript is a powerful language, with it's ability to be used in both the Frontend and Backend.
+But with great power comes great responsibility.
+
+In this talk, you'll understand how insidious this power can be when it comes to testing in the backend.
+We'll go through multiple scenarios that you might encouter, with each being open to questions, and covering their solutions.
+By the end of the talk, you'll walk away with not only an understanding of what's behind the curtains, but also methodologies so you never have to look there again.
 
 ### Outline
 
