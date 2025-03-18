@@ -15,7 +15,7 @@ A [repo](https://github.com/ekohilas/vitest-considered-harmful) for resources of
 
 | Conference | Slides | Video | Notes | Length | Year |
 |------------|:------:|:-----:|:-----:|-------:|-----:|
-| [SydJS]() | [🔗]() | [🔗]() | [🔗]() | 45 min | 2024 |
+| [SydJS]() | [🔗]() | [🔗](https://youtu.be/SJG8dSn22rw?si=vMTW1U7vvL3ThfXb&t=123) | [🔗]() | 45 min | 2024 |
 
 ### Abstract
 TODO
